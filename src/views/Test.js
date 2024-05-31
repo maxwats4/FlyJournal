@@ -1,7 +1,7 @@
 import React from "react";
 
 //so you just create the react component and then add it to routes
-
+// new comment
 // react-bootstrap components
 import {
   Badge,
