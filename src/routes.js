@@ -24,6 +24,7 @@ import Maps from "views/Maps.js";
 import Notifications from "views/Notifications.js";
 import Upgrade from "views/Upgrade.js";
 import Test from "views/Test.js";
+import Journal from "views/Journal.js";
 
 const dashboardRoutes = [
   {
@@ -32,6 +33,13 @@ const dashboardRoutes = [
     name: "Upgrade to PRO",
     icon: "nc-icon nc-alien-33",
     component: Upgrade,
+    layout: "/admin",
+  },
+  {
+    path: "/journal",
+    name: "Journal",
+    icon: "nc-icon nc-circle-09",
+    component: Journal,
     layout: "/admin",
   },
   {
