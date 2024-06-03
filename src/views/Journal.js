@@ -1,5 +1,7 @@
-import React from "react";
-
+import React, { useState, useCallback } from "react";
+import { useDropzone } from "react-dropzone";
+//import FileUpload from "/project/FlyJournal/src/components/Functions/FileUpload.js";
+import "/project/FlyJournal/src/components/Functions/FileUpload.css";
 // react-bootstrap components
 import {
   Badge,
@@ -11,10 +13,50 @@ import {
   Container,
   Row,
   Col,
+  ListGroup,
   form,
 } from "react-bootstrap";
 
 function Journal() {
+  /**
+   * Functions for uploading & dropping documents
+   *
+   */
+  const [files, setFiles] = useState([]);
+
+  const onDrop = useCallback((acceptedFiles) => {
+    setFiles((prevFiles) => [...prevFiles, ...acceptedFiles]);
+  }, []);
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+
+  const handleFileChange = (e) => {
+    setFiles((prevFiles) => [...prevFiles, ...e.target.files]);
+  };
+
+  const handleRemoveFile = (fileToRemove) => {
+    setFiles((prevFiles) => prevFiles.filter((file) => file !== fileToRemove));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    files.forEach((file) => formData.append("files", file));
+
+    // Example: sending form data to the server using fetch
+    fetch("/api/upload", {
+      method: "POST",
+      body: formData,
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Success:", data);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  };
+
   return (
     <>
       <Container fluid>
@@ -130,22 +172,72 @@ function Journal() {
                         <label>Notes</label>
                         <Form.Control
                           cols="80"
-                          defaultValue="Lamborghini Mercy, Your chick she so thirsty, I'm in
-                          that two seat Lambo."
-                          placeholder="Here can be your description"
+                          placeholder="Enter Fishing Notes Here."
                           rows="4"
                           as="textarea"
                         ></Form.Control>
                       </Form.Group>
                     </Col>
                   </Row>
-                  <Button
+                  {/* File Drop Section*/}
+                  <Container>
+                    <Form onSubmit={handleSubmit}>
+                      <Form.Group controlId="formFile" className="mb-3">
+                        <Form.Label>Upload Profile Pictures</Form.Label>
+                        <div
+                          {...getRootProps({ className: "dropzone" })}
+                          style={dropzoneStyle}
+                        >
+                          <input {...getInputProps()} />
+                          {isDragActive ? (
+                            <p>Drop the files here...</p>
+                          ) : (
+                            <p>
+                              Drag 'n' drop some files here, or click to select
+                              files
+                            </p>
+                          )}
+                        </div>
+                        <Form.Control
+                          type="file"
+                          onChange={handleFileChange}
+                          multiple
+                          className="mt-3"
+                        />
+                        {files.length > 0 && (
+                          <ListGroup className="mt-3">
+                            {files.map((file, index) => (
+                              <ListGroup.Item key={index}>
+                                {file.name}
+                                <Button
+                                  variant="danger"
+                                  size="sm"
+                                  onClick={() => handleRemoveFile(file)}
+                                  className="float-end"
+                                >
+                                  Remove
+                                </Button>
+                              </ListGroup.Item>
+                            ))}
+                          </ListGroup>
+                        )}
+                      </Form.Group>
+                      <Button
+                        variant="primary"
+                        type="submit"
+                        className="remove-files-button"
+                      >
+                        Save Files
+                      </Button>
+                    </Form>
+                  </Container>
+                  {/* <Button
                     className="btn-fill pull-right"
                     type="submit"
                     variant="info"
                   >
                     Submit
-                  </Button>
+                  </Button> */}
                   <div className="clearfix"></div>
                 </Form>
               </Card.Body>
@@ -211,5 +303,13 @@ function Journal() {
     </>
   );
 }
+
+const dropzoneStyle = {
+  border: "2px dashed #007bff",
+  borderRadius: "5px",
+  padding: "20px",
+  textAlign: "center",
+  cursor: "pointer",
+};
 
 export default Journal;
