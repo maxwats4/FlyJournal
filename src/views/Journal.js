@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 //import FileUpload from "/project/FlyJournal/src/components/Functions/FileUpload.js";
-import "/project/FlyJournal/src/components/Functions/FileUpload.css";
+//import "/project/FlyJournal/src/components/Functions/FileUpload.css";
 // react-bootstrap components
 import {
   Badge,
